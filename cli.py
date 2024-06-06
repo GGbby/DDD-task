@@ -1,14 +1,13 @@
-# import sys
-# import traceback
-# from todos.domain.task import Task
-# from todos.repos.mem_repos import MemRepos
-# from todos.repos.sqlite_repos import SQLiteRepos
-# from todos.usecases.task_uc import TaskUC
+import sys
+import traceback
+from todos.domain.task import Task
+from todos.repos.mem_repos import MemRepos
+from todos.repos.sqlite_repos import SQLiteRepos
+from todos.usecases.task_uc import TaskUC
 
 # REPO = MemRepos()
 REPO = SQLiteRepos('./sqlitedb/sqlite.db')
 USER = None
-
 
 class BCOLORS:
     PURPLE = '\033[95m'
@@ -20,55 +19,71 @@ class BCOLORS:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+class Command:
+    def execute(self):
+        pass
 
-# def login_handler():
-#     global USER
-#     print('Enter username:')
-#     USER = sys.stdin.readline()
-#     USER = USER.strip()
-#     print(BCOLORS.PURPLE + 'WELCOME', USER)
+class LoginCommand(Command):
+    def execute(self):
+        global USER
+        print('Enter username:')
+        USER = sys.stdin.readline()
+        USER = USER.strip()
+        print(BCOLORS.PURPLE + 'WELCOME', USER)
 
+class ListTasksCommand(Command):
+    def execute(self):
+        task_uc = TaskUC(REPO)
+        task_list = task_uc.get_task_list(USER)
+        print(BCOLORS.PURPLE + USER + '\'s task list:')
+        for task in task_list:
+            print(BCOLORS.PURPLE + '- ' + str(task))
 
-# def list_tasks():
-#     task_uc = TaskUC(REPO)
-#     task_list = task_uc.get_task_list(USER)
-#     print(BCOLORS.PURPLE + USER + '\'s task list:')
-#     for task in task_list:
-#         print(BCOLORS.PURPLE + '- ' + str(task))
+class AddTaskCommand(Command):
+    def execute(self):
+        print('Enter task\'s description:')
+        desc = sys.stdin.readline()
+        desc = desc.strip()
 
+        task_uc = TaskUC(REPO)
+        result = task_uc.create_task(USER, desc)
+        print(BCOLORS.PURPLE + 'created:', result)
 
-# def add_task():
-#     print('Enter task\'s description:')
-#     desc = sys.stdin.readline()
-#     desc = desc.strip()
+class MarkDoingCommand(Command):
+    def execute(self):
+        print('Enter task id:')
+        task_id = sys.stdin.readline()
+        task_id = task_id.strip()
 
-#     task_uc = TaskUC(REPO)
-#     result = task_uc.create_task(USER, desc)
-#     print(BCOLORS.PURPLE + 'created:', result)
+        task_uc = TaskUC(REPO, REPO)
+        try:
+            task_uc.mark_task_as_doing(USER, task_id)
+            print(BCOLORS.PURPLE + 'SUCCESS')
+        except Exception as e:
+            print(BCOLORS.FAIL + 'Exception:', str(e))
 
+class MarkDoneCommand(Command):
+    def execute(self):
+        print('Enter task id:')
+        task_id = sys.stdin.readline()
+        task_id = task_id.strip()
 
-# def mark_doing():
-#     print('Enter task id:')
-#     task_id = sys.stdin.readline()
-#     task_id = task_id.strip()
+        task_uc = TaskUC(REPO)
+        task_uc.mark_task_as_done(USER, task_id)
+        print(BCOLORS.PURPLE + 'SUCCESS')
 
-#     task_uc = TaskUC(REPO, REPO)
-#     try:
-#         task_uc.mark_task_as_doing(USER, task_id)
-#         print(BCOLORS.PURPLE + 'SUCCESS')
-#     except Exception as e:
-#         print(BCOLORS.FAIL + 'Exception:', str(e))
+class CommandInvoker:
+    def __init__(self):
+        self.commands = {}
 
+    def register(self, command_id, command):
+        self.commands[command_id] = command
 
-# def mark_done():
-#     print('Enter task id:')
-#     task_id = sys.stdin.readline()
-#     task_id = task_id.strip()
-
-#     task_uc = TaskUC(REPO)
-#     task_uc.mark_task_as_done(USER, task_id)
-#     print(BCOLORS.PURPLE + 'SUCCESS')
-
+    def execute(self, command_id):
+        if command_id in self.commands:
+            self.commands[command_id].execute()
+        else:
+            print('Invalid command!')
 
 def print_command_list():
     print(BCOLORS.BOLD + '+' * 25 + BCOLORS.ENDC)
@@ -87,92 +102,29 @@ def print_command_list():
 
     print('-' * 25)
 
-
 def get_command():
     print(BCOLORS.OKGREEN + '\n#Enter next command:' + BCOLORS.ENDC)
     cmd = sys.stdin.readline()
     try:
-        return int(cmd)
-    except:
+        cmd_int = int(cmd)
+        if cmd_int == 0:
+            print(BCOLORS.PURPLE + 'Exiting...')
+            sys.exit(0)
+        return cmd_int
+    except ValueError:
         return -1
-
-
-# if __name__ == '__main__':
-#     print_command_list()
-#     cmd = -1
-#     while cmd != 0:
-#         cmd = get_command()
-#         print('Processing command [%s]' % cmd)
-#         try:
-#             if cmd == 1:
-#                 login_handler()
-#             elif cmd == 2:
-#                 list_tasks()
-#             elif cmd == 3:
-#                 add_task()
-#             elif cmd == 4:
-#                 mark_doing()
-#             elif cmd == 5:
-#                 mark_done()
-#         except:
-#             print('>>>>>>>>> Exception <<<<<<<<<')
-#             traceback.print_exc()
-
-# with command design pattern version
-import sys
-import traceback
-from todos.domain.task import Task
-from todos.repos.mem_repos import MemRepos
-from todos.repos.sqlite_repos import SQLiteRepos
-from todos.usecases.task_uc import TaskUC
-
-# REPO = MemRepos()
-REPO = SQLiteRepos('./sqlitedb/sqlite.db')
-USER = None
-
-class Command:
-    def execute(self):
-        pass
-
-class LoginCommand(Command):
-    def execute(self):
-        global USER
-        print('Enter username:')
-        USER = sys.stdin.readline()
-        USER = USER.strip()
-        print('WELCOME', USER)
-
-class ListTasksCommand(Command):
-    def execute(self):
-        task_uc = TaskUC(REPO)
-        task_list = task_uc.get_task_list(USER)
-        print(USER + '\'s task list:')
-        for task in task_list:
-            print('- ' + str(task))
-
-# Define other commands here...
-
-class CommandInvoker:
-    def __init__(self):
-        self.commands = {}
-
-    def register(self, command_id, command):
-        self.commands[command_id] = command
-
-    def execute(self, command_id):
-        if command_id in self.commands:
-            self.commands[command_id].execute()
-        else:
-            print('Invalid command!')
 
 if __name__ == '__main__':
     invoker = CommandInvoker()
     invoker.register(1, LoginCommand())
     invoker.register(2, ListTasksCommand())
-    # Register other commands here...
+    invoker.register(3, AddTaskCommand())
+    invoker.register(4, MarkDoingCommand())
+    invoker.register(5, MarkDoneCommand())
 
+    print_command_list()
     cmd = -1
-    while cmd != 0:
+    while True:
         cmd = get_command()
         print('Processing command [%s]' % cmd)
         try:
