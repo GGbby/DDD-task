@@ -5,20 +5,20 @@
 # from todos.repos.sqlite_repos import SQLiteRepos
 # from todos.usecases.task_uc import TaskUC
 
-# # REPO = MemRepos()
-# REPO = SQLiteRepos('./sqlitedb/sqlite.db')
-# USER = None
+# REPO = MemRepos()
+REPO = SQLiteRepos('./sqlitedb/sqlite.db')
+USER = None
 
 
-# class BCOLORS:
-#     PURPLE = '\033[95m'
-#     OKBLUE = '\033[94m'
-#     OKGREEN = '\033[92m'
-#     WARNING = '\033[93m'
-#     FAIL = '\033[91m'
-#     ENDC = '\033[0m'
-#     BOLD = '\033[1m'
-#     UNDERLINE = '\033[4m'
+class BCOLORS:
+    PURPLE = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 
 # def login_handler():
@@ -70,31 +70,31 @@
 #     print(BCOLORS.PURPLE + 'SUCCESS')
 
 
-# def print_command_list():
-#     print(BCOLORS.BOLD + '+' * 25 + BCOLORS.ENDC)
-#     print(BCOLORS.BOLD + '+++ TODOS CLI Program'.ljust(25-4, ' '), '+++' + BCOLORS.ENDC)
-#     if USER:
-#         print('Welcome', USER)
-#     print(BCOLORS.BOLD + '+' * 25 + BCOLORS.ENDC)
+def print_command_list():
+    print(BCOLORS.BOLD + '+' * 25 + BCOLORS.ENDC)
+    print(BCOLORS.BOLD + '+++ TODOS CLI Program'.ljust(25-4, ' '), '+++' + BCOLORS.ENDC)
+    if USER:
+        print('Welcome', USER)
+    print(BCOLORS.BOLD + '+' * 25 + BCOLORS.ENDC)
 
-#     print(BCOLORS.OKGREEN + 'Command list:' + BCOLORS.ENDC)
-#     print('0. Exit')
-#     print('1. Login by username')
-#     print('2. List all your tasks')
-#     print('3. Add task')
-#     print('4. Mark task doing')
-#     print('5. Mark task done')
+    print(BCOLORS.OKGREEN + 'Command list:' + BCOLORS.ENDC)
+    print('0. Exit')
+    print('1. Login by username')
+    print('2. List all your tasks')
+    print('3. Add task')
+    print('4. Mark task doing')
+    print('5. Mark task done')
 
-#     print('-' * 25)
+    print('-' * 25)
 
 
-# def get_command():
-#     print(BCOLORS.OKGREEN + '\n#Enter next command:' + BCOLORS.ENDC)
-#     cmd = sys.stdin.readline()
-#     try:
-#         return int(cmd)
-#     except:
-#         return -1
+def get_command():
+    print(BCOLORS.OKGREEN + '\n#Enter next command:' + BCOLORS.ENDC)
+    cmd = sys.stdin.readline()
+    try:
+        return int(cmd)
+    except:
+        return -1
 
 
 # if __name__ == '__main__':
